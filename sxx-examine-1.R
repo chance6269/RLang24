@@ -14,6 +14,15 @@ for (n in v1) {
   }
   
 }
+n <- 10
+s <- 1
+v <- c(s:n)
+l <- length(v)
+
+seq(s, l, 2)
+
+sum(v[seq(s,l,2)])
+sum(v[seq(s+1,l,2)])
 
 # 2. 1부터 16까지 벡터 값을 Matrix 4행 4열 생성하라.
 m44 <- matrix(c(1:16), 4, 4)
@@ -32,7 +41,7 @@ apply(m44, 1, mean)
 apply(m44, 2, mean)
 
 # 3. 벡터 1부터 12까지 12개 요소로 구성된 3행 2열 2면의 array 생성하기
-a322 <- array((1:12),c(3,2,2))
+a322 <- array((1:14),c(3,2,2))
 a322
 # 각 면의 행의 합계
 apply(a322, 1, sum) # 22 26 30
