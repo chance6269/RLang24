@@ -15,6 +15,7 @@ new_student <- data.frame(번호=c("4000", "5000"),
 
 new_student
 
+# 데이터프레임 합치기
 df_student <- rbind(student,new_student)
 df_student
 
