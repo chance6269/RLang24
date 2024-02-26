@@ -7,7 +7,7 @@ cat_nine <- function(start, end){
   # for문 시작단부터 종료단까지 반복
   for (n in c(start:end)) {
     cat('\n[',n,'단]\n',sep='')
-    # 1단부터 9단까지 반복
+    # n*1부터 n*9까지 반복
     for (num in (1:9)) {
       cat(n, 'X', num,'=',n*num,'\n')  
     }
