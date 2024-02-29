@@ -3,10 +3,12 @@
 library(dplyr)
 
 # 문재인 대통령 연설문 불러오기
+setwd('./data')
 raw_moon <- readLines("speech_moon.txt", encoding = "UTF-8")
 moon <- raw_moon %>%
   as_tibble() %>%
   mutate(president = "moon")
+moon
 
 # 박근혜 대통령 연설문 불러오기
 raw_park <- readLines("speech_park.txt", encoding = "UTF-8")
@@ -232,6 +234,8 @@ frequency_wide <- frequency_wide %>%
 top10 <- frequency_wide %>%
   filter(rank(odds_ratio) <= 10 | rank(-odds_ratio) <= 10)
 
+?rank()
+
 top10 %>%
   arrange(-odds_ratio)
 
@@ -256,7 +260,7 @@ ggplot(top10, aes(x = reorder_within(word, n, president),
                   fill = president)) +
   geom_col() +
   coord_flip() +
-  facet_wrap(~ president, scales = "free_y") +
+  facet_wrap(~ president, scales = "free_y") + # ~ president : 대통령 별로 면분할하여 그래프를 그려라
   scale_x_reordered()
 
 
@@ -336,6 +340,8 @@ frequency_wide <- frequency_wide %>%
 top10 <- frequency_wide %>%
   group_by(president = ifelse(log_odds_ratio > 0, "moon", "park")) %>%
   slice_max(abs(log_odds_ratio), n = 10, with_ties = F)
+
+top10
 
 top10 %>% 
   arrange(-log_odds_ratio) %>% 

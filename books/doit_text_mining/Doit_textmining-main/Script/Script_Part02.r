@@ -36,7 +36,7 @@ text %>%
 
 # -------------------------------------------------------------------------
 # 문재인 대통령 연설문 불러오기
-raw_moon <- readLines("speech_moon.txt", encoding = "UTF-8")
+raw_moon <- readLines("./data/speech_moon.txt", encoding = "UTF-8")
 
 # 기본적인 전처리
 library(stringr)
