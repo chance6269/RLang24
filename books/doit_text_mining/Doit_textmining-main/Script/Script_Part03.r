@@ -364,6 +364,7 @@ ggplot(top10, aes(x = reorder(word, log_odds_ratio),
 install.packages("readr")
 library(readr)
 
+setwd('./data')
 raw_speeches <- read_csv("speeches_presidents.csv")
 raw_speeches
 

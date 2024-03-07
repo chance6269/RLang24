@@ -1,13 +1,19 @@
 # 05-1 --------------------------------------------------------------------
+# 동시 출현 단어 분석
+# - 단어 간의 관계를 살펴보는 분석 방법
+# ex. '손 - 장갑','머리 - 모자'
+# 네트워크 그래프 만들기
 
 # 기생충 기사 댓글 불러오기
 library(readr)
+setwd('./data')
 raw_news_comment <- read_csv("news_comment_parasite.csv")
 
+
 # 전처리
-library(dplyr)
-library(stringr)
-library(textclean)
+library(dplyr) # %>% mutate, select, row_number() 쓰기 위한 패키지
+library(stringr) # str_replace_all(), str_squish() 포함된 패키지
+library(textclean) # ???
 
 news_comment <- raw_news_comment %>%
   select(reply) %>%
@@ -16,14 +22,16 @@ news_comment <- raw_news_comment %>%
          id = row_number())
 
 
-# -------------------------------------------------------------------------
-library(tidytext)
-library(KoNLP)
 
+# -------------------------------------------------------------------------
+library(tidytext) # unnest_tokens() 포함된 패키지
+library(KoNLP) # SimplePos22(), extractNoun() 포함된 패키지
+# SimplePos22() : 문장의 단어를 22개의 품사로 구분해준다. 각 단어 뒤에 품사를 나타내는 태그 추가
+# 태그를 이용하여 원하는 품사의 단어를 추출할 수 있음.
 comment_pos <- news_comment %>%
   unnest_tokens(input = reply,
                 output = word,
-                token = SimplePos22,
+                token = SimplePos22, 
                 drop = F)
 
 comment_pos %>% 
@@ -32,9 +40,9 @@ comment_pos %>%
 
 # -------------------------------------------------------------------------
 # 품사별로 행 분리
-library(tidyr)
+library(tidyr) # separate_rows() 포함된 패키지
 comment_pos <- comment_pos %>%
-  separate_rows(word, sep = "[+]")
+  separate_rows(word, sep = "[+]") # '+' 등장할때마다 행 나누기
 
 comment_pos %>% 
   select(word, reply)
@@ -59,7 +67,7 @@ noun %>%
 # 동사, 형용사 추출하기
 pvpa <- comment_pos %>%
   filter(str_detect(word, "/pv|/pa")) %>%         # "/pv", "/pa" 추출
-  mutate(word = str_replace(word, "/.*$", "다"))  # "/"로 시작 문자를 "다"로 바꾸기
+  mutate(word = str_replace(word, "/.*$", "다"))  # "/"로 시작하는 문자를 "다"로 바꾸기
 
 pvpa %>%
   select(word, reply)
@@ -71,6 +79,7 @@ pvpa %>%
 
 
 # -------------------------------------------------------------------------
+# 추출한 데이터 결합
 # 품사 결합
 comment <- bind_rows(noun, pvpa) %>%
   filter(str_count(word) >= 2) %>%
@@ -81,6 +90,7 @@ comment %>%
 
 
 # -------------------------------------------------------------------------
+# 명사,동사,형용사 한 번에 추출하기
 comment_new <- comment_pos %>%
   separate_rows(word, sep = "[+]") %>%
   filter(str_detect(word, "/n|/pv|/pa")) %>%
@@ -109,7 +119,11 @@ pair %>% filter(item1 == "봉준호")
 
 
 # 05-2 --------------------------------------------------------------------
+# 동시 출현 네트워크
+#  : 단어의 관계를 네트워크 형태로 표현한 것
+#  - 어떤 맥락에서 함께 사용되었는가
 
+# 네트워크 그래프 데이터 만들기
 install.packages("tidygraph")
 library(tidygraph)
 
@@ -119,6 +133,7 @@ graph_comment <- pair %>%
 
 graph_comment
 
+class(graph_comment)
 
 # -------------------------------------------------------------------------
 install.packages("ggraph")

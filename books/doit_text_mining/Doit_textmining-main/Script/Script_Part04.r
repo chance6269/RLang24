@@ -1,9 +1,6 @@
 # 04-1 --------------------------------------------------------------------
 
-# 감정 사전 불러오기
-library(readr)
-dic <- read_csv("knu_sentiment_lexicon.csv")
-
+.
 
 # -------------------------------------------------------------------------
 library(dplyr)
@@ -79,8 +76,9 @@ score_df
 # 04-2 --------------------------------------------------------------------
 
 # 데이터 불러오기
+setwd('./data')
 raw_news_comment <- read_csv("news_comment_parasite.csv")
-
+raw_news_comment
 
 # -------------------------------------------------------------------------
 # 기본적인 전처리
@@ -93,7 +91,7 @@ news_comment <- raw_news_comment %>%
 
 # 데이터 구조 확인
 glimpse(news_comment)
-
+str(news_comment)
 
 # -------------------------------------------------------------------------
 # 토큰화
@@ -240,7 +238,7 @@ comment <- score_comment %>%
                 drop = F) %>%
   filter(str_detect(word, "[가-힣]") &  # 한글 추출
          str_count(word) >= 2)          # 두 글자 이상 추출
-
+comment
 
 # -------------------------------------------------------------------------
 # 감정 및 단어별 빈도 구하기
@@ -422,10 +420,13 @@ new_comment <- new_score_comment %>%
   filter(str_detect(word, "[가-힣]") &
            str_count(word) >= 2)
 
+new_comment
+
 # 감정 및 단어별 빈도 구하기
 new_frequency_word <- new_comment %>%
   count(sentiment, word, sort = T)
 
+new_frequency_word
 
 # -------------------------------------------------------------------------
 # Wide form으로 변환
@@ -434,6 +435,8 @@ new_comment_wide <- new_frequency_word %>%
   pivot_wider(names_from = sentiment,
               values_from = n,
               values_fill = list(n = 0))
+
+new_comment_wide
 
 # 로그 오즈비 구하기
 new_comment_wide <- new_comment_wide %>%
@@ -445,6 +448,13 @@ new_comment_wide <- new_comment_wide %>%
 new_top10 <- new_comment_wide %>%
   group_by(sentiment = ifelse(log_odds_ratio > 0, "pos", "neg")) %>%
   slice_max(abs(log_odds_ratio), n = 10, with_ties = F)
+
+new_top102 <- new_comment_wide %>% 
+  mutate(sentiment = ifelse(log_odds_ratio > 0, "pos", "neg")) %>% 
+  group_by(sentiment) %>% 
+  slice_max(abs(log_odds_ratio), n = 10, with_ties = F)
+
+new_top10==new_top102
 
 # 막대 그래프 만들기
 ggplot(new_top10, aes(x = reorder(word, log_odds_ratio),
