@@ -146,6 +146,7 @@ ggraph(graph_comment) +
 
 
 # -------------------------------------------------------------------------
+# 그래프 다듬기
 library(showtext)
 font_add_google(name = "Nanum Gothic", family = "nanumgothic")
 showtext_auto()
@@ -203,6 +204,7 @@ pair <- comment %>%
                  feature = id,
                  sort = T)
 
+pair
 # 네트워크 그래프 데이터 만들기
 graph_comment <- pair %>%
   filter(n >= 25) %>%
@@ -214,6 +216,10 @@ word_network(graph_comment)
 
 
 # -------------------------------------------------------------------------
+# 연결 중심성과 커뮤니티 표현하기
+# 어떤 단어를 중심으로 해석해야할지 파악
+# 연결 중심성 : 노드가 다른 노드들과 얼마나 밀접하게 연결되는지 나타낸 값.
+# 커뮤니티 : 단어 간의 관계가 가까워 빈번하게 연결된 노드 집단.
 set.seed(1234)
 graph_comment <- pair %>%
   filter(n >= 25) %>%
@@ -251,7 +257,7 @@ graph_comment %>%
 
 # -------------------------------------------------------------------------
 graph_comment %>%
-  filter(group == 4) %>%
+  filter(group == 1) %>%
   arrange(-centrality) %>%
   data.frame()
 
@@ -281,6 +287,13 @@ news_comment %>%
 
 
 # 05-3 --------------------------------------------------------------------
+# 단어 간 상관 분석
+# Phi coefficient : 파이 계수
+#  - 두 단어가 함께 사용되는 경우가 각각 사용되는 경우에 비해 얼마나 많은지 나타낸 지표
+#  - 상대적으로 관련성이 큰 단어가 무엇인지 알 수 있음.
+
+# 모두 있음, X만 있음
+# 모두 없음, Y만 있음
 
 word_cors <- comment %>%
   add_count(word) %>%
